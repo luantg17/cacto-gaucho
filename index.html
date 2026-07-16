@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cacto Gaúcho - Estação Meteorológica</title>
+    <style>
+        /* ===== ESTILOS ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            color: #3d2b1f;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            color: #6b4e3a;
+            font-style: italic;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .cacto-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            min-height: 280px;
+        }
+
+        .cacto-img {
+            width: 250px;
+            height: 280px;
+            object-fit: contain;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 15px 5px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .icon {
+            font-size: 1.5rem;
+        }
+
+        .label {
+            font-size: 0.75rem;
+            color: #888;
+            margin: 5px 0;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .unit {
+            font-size: 0.7rem;
+            color: #999;
+        }
+
+        .status-ip {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #6b4e3a;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .status-ip .ip {
+            font-weight: bold;
+            color: #3d2b1f;
+        }
+
+        .conectado {
+            color: #22c55e;
+        }
+
+        .desconectado {
+            color: #ef4444;
+        }
+
+        @media (max-width: 480px) {
+            .cacto-img {
+                width: 200px;
+                height: 230px;
+            }
+            .info-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🌵 Cacto Gaúcho</h1>
+            <p class="tagline">"O clima muda. Ele sente."</p>
+        </header>
+
+        <div class="cacto-area">
+            <img id="cacto-character" class="cacto-img" src="imagens/cacto-ensolarado.png" alt="Cacto Gaúcho">
+        </div>
+
+        <div class="info-cards">
+            <div class="card">
+                <span class="icon">🌡️</span>
+                <span class="label">Temperatura</span>
+                <span id="temp-value" class="value">--</span>
+                <span class="unit">°C</span>
+            </div>
+            <div class="card">
+                <span class="icon">💧</span>
+                <span class="label">Umidade</span>
+                <span id="umid-value" class="value">--</span>
+                <span class="unit">%</span>
+            </div>
+            <div class="card">
+                <span class="icon">☀️</span>
+                <span class="label">UV</span>
+                <span id="uv-value" class="value">--</span>
+                <span class="unit">idx</span>
+            </div>
+            <div class="card">
+                <span class="icon">🌧️</span>
+                <span class="label">Chuva</span>
+                <span id="rain-value" class="value">--</span>
+                <span class="unit">mm</span>
+            </div>
+            <div class="card">
+                <span class="icon">🔋</span>
+                <span class="label">Bateria</span>
+                <span id="battery-value" class="value">--</span>
+                <span class="unit">%</span>
+            </div>
+        </div>
+
+        <div class="status-ip">
+            📡 Conectado ao ESP32: <span id="status-conexao" class="desconectado">⛔ Desconectado</span>
+            <br>
+            IP: <span class="ip" id="ip-esp">Nenhum</span>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // ===== CONFIGURAÇÃO - MUDE O IP DO SEU ESP32 AQUI! =========
+        // ============================================================
+        var ipESP32 = '192.168.0.39'; // ← COLOQUE O IP DO SEU ESP32 AQUI
+
+        // ============================================================
+        // ===== MAPEAMENTO DAS IMAGENS ===============================
+        // ============================================================
+        var imagens = {
+            ensolarado: 'imagens/cacto-ensolarado.png',
+            nublado: 'imagens/cacto-nublado.png',
+            chuvoso: 'imagens/cacto-chuvoso.png',
+            ventoso: 'imagens/cacto-ventoso.png',
+            frio: 'imagens/cacto-frio.png',
+            quente: 'imagens/cacto-quente.png'
+        };
+
+        var estadoAtual = '';
+        var tentativasFalhas = 0;
+
+        // ============================================================
+        // ===== ATUALIZA OS DADOS NA TELA ============================
+        // ============================================================
+        function updateWeather(data) {
+            var temp = data.temp;
+            var umi = data.umi;
+            var uv = data.uv;
+            var chuva = data.chuva;
+            var bat = data.bat;
+
+            document.getElementById('temp-value').textContent = temp || '--';
+            document.getElementById('umid-value').textContent = umi || '--';
+            document.getElementById('uv-value').textContent = uv || '--';
+            document.getElementById('rain-value').textContent = chuva || '--';
+            document.getElementById('battery-value').textContent = bat || '--';
+
+            // Determina o estado do cacto
+            var novoEstado = 'nublado';
+            var t = parseFloat(temp) || 0;
+            var u = parseFloat(umi) || 0;
+            var uvVal = parseFloat(uv) || 0;
+            var c = parseFloat(chuva) || 0;
+
+            if (c > 70) novoEstado = 'chuvoso';
+            else if (t > 33) novoEstado = 'quente';
+            else if (t < 17) novoEstado = 'frio';
+            else if (uvVal > 8) novoEstado = 'ensolarado';
+            else if (u > 80) novoEstado = 'nublado';
+            else novoEstado = 'ventoso';
+
+            // Troca a imagem com animação
+            if (novoEstado !== estadoAtual) {
+                var img = document.getElementById('cacto-character');
+                img.style.opacity = '0';
+                img.style.transform = 'scale(0.8)';
+                setTimeout(function() {
+                    img.src = imagens[novoEstado];
+                    img.style.opacity = '1';
+                    img.style.transform = 'scale(1)';
+                }, 300);
+                estadoAtual = novoEstado;
+                console.log('🌵 Cacto mudou para: ' + novoEstado);
+            }
+        }
+
+        // ============================================================
+        // ===== BUSCA DADOS DO ESP32 =================================
+        // ============================================================
+        function buscarDadosESP32() {
+            var url = 'http://' + ipESP32 + '/dados';
+
+            fetch(url)
+                .then(function(resposta) {
+                    if (!resposta.ok) {
+                        throw new Error('HTTP error ' + resposta.status);
+                    }
+                    return resposta.json();
+                })
+                .then(function(dados) {
+                    // Sucesso!
+                    document.getElementById('status-conexao').className = 'conectado';
+                    document.getElementById('status-conexao').textContent = '✅ Conectado';
+                    document.getElementById('ip-esp').textContent = ipESP32;
+                    tentativasFalhas = 0;
+                    updateWeather(dados);
+                })
+                .catch(function(erro) {
+                    console.error('Erro ao buscar dados:', erro);
+                    tentativasFalhas++;
+
+                    // Mostra que está desconectado
+                    document.getElementById('status-conexao').className = 'desconectado';
+                    document.getElementById('status-conexao').textContent = '⛔ Desconectado';
+
+                    // Se falhou muitas vezes, mostra o IP em vermelho
+                    if (tentativasFalhas > 3) {
+                        document.getElementById('ip-esp').textContent = ipESP32 + ' (offline)';
+                        document.getElementById('ip-esp').style.color = '#ef4444';
+                    }
+
+                    // Dados de fallback (simulação)
+                    var fallback = {
+                        temp: (18 + Math.random() * 18).toFixed(1),
+                        umi: (30 + Math.random() * 60).toFixed(0),
+                        uv: (Math.random() * 11).toFixed(1),
+                        chuva: (Math.random() * 100).toFixed(0),
+                        bat: (3.2 + Math.random() * 1.0).toFixed(2)
+                    };
+                    updateWeather(fallback);
+                });
+        }
+
+        // ============================================================
+        // ===== INICIALIZA ===========================================
+        // ============================================================
+        console.log('🌵 Cacto Gaúcho - Iniciando...');
+        console.log('📡 IP do ESP32: ' + ipESP32);
+
+        // Atualiza a cada 3 segundos
+        setInterval(buscarDadosESP32, 3000);
+        buscarDadosESP32();
+    </script>
+</body>
+</html>
