@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cacto Gaúcho - Estação Meteorológica</title>
+    <title>🌵 Cacto Gaúcho - Estação Meteorológica</title>
     <style>
-        /* ===== ESTILOS ===== */
+        /* ============================================================
+           RESET E BASE
+           ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -13,191 +15,359 @@
         }
 
         body {
-            background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             padding: 20px;
+            background: linear-gradient(145deg, #0f172a 0%, #1e293b 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Fundo com efeito de céu estrelado/nuvens */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 80%, rgba(34, 197, 94, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 50%);
+            z-index: 0;
         }
 
         .container {
-            max-width: 600px;
+            max-width: 700px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 30px 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 35px 30px;
+            border: 1px solid rgba(51, 65, 85, 0.3);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .header {
             text-align: center;
+            margin-bottom: 10px;
         }
 
-        header h1 {
-            font-size: 2rem;
-            color: #3d2b1f;
-            margin-bottom: 5px;
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #22c55e, #4ade80);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
         }
 
-        .tagline {
-            color: #6b4e3a;
+        .header .tagline {
+            color: #94a3b8;
             font-style: italic;
             font-size: 0.9rem;
-            margin-bottom: 20px;
+            margin-top: 4px;
+            letter-spacing: 1px;
         }
 
+        .header .tagline span {
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        /* ============================================================
+           Cacto ÁREA
+           ============================================================ */
         .cacto-area {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 20px 0;
+            margin: 15px 0 20px 0;
+            position: relative;
             min-height: 280px;
         }
 
-        .cacto-img {
-            width: 250px;
-            height: 280px;
-            object-fit: contain;
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+        .cacto-wrapper {
+            position: relative;
+            display: inline-block;
         }
 
+        .cacto-img {
+            width: 260px;
+            height: 300px;
+            object-fit: contain;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 15px 30px rgba(34, 197, 94, 0.15));
+            border-radius: 20px;
+        }
+
+        /* Efeito de brilho ao redor do cacto */
+        .cacto-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: radial-gradient(circle at center, rgba(34, 197, 94, 0.05), transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulsar 3s ease-in-out infinite;
+        }
+
+        @keyframes pulsar {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* ============================================================
+           ESTADO DO CLIMA (label abaixo do cacto)
+           ============================================================ */
+        .estado-clima {
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        .estado-clima .badge {
+            display: inline-block;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            padding: 6px 24px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #4ade80;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* ============================================================
+           FRASE DO DIA
+           ============================================================ */
+        .frase-do-dia {
+            text-align: center;
+            margin: 15px 0 20px 0;
+            padding: 12px 20px;
+            background: rgba(34, 197, 94, 0.05);
+            border-radius: 16px;
+            border-left: 4px solid #22c55e;
+        }
+
+        .frase-do-dia p {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+
+        .frase-do-dia p .destaque {
+            color: #4ade80;
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        /* ============================================================
+           CARDS
+           ============================================================ */
         .info-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-            gap: 15px;
-            margin-top: 30px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-top: 20px;
         }
 
         .card {
-            background: white;
-            padding: 15px 5px;
-            border-radius: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: transform 0.2s;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            padding: 14px 8px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(51, 65, 85, 0.2);
+            transition: all 0.3s ease;
         }
 
         .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
+            border-color: rgba(34, 197, 94, 0.3);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.05);
         }
 
-        .icon {
-            font-size: 1.5rem;
+        .card .icon {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 4px;
         }
 
-        .label {
-            font-size: 0.75rem;
-            color: #888;
-            margin: 5px 0;
+        .card .label {
+            font-size: 0.55rem;
+            color: #94a3b8;
             text-transform: uppercase;
-            font-weight: bold;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            display: block;
         }
 
-        .value {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #333;
+        .card .value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-top: 2px;
+            display: block;
         }
 
-        .unit {
-            font-size: 0.7rem;
-            color: #999;
+        .card .value.temperatura { color: #f87171; }
+        .card .value.umidade { color: #60a5fa; }
+        .card .value.uv { color: #fbbf24; }
+        .card .value.chuva { color: #818cf8; }
+        .card .value.bateria { color: #4ade80; }
+
+        .card .unit {
+            font-size: 0.6rem;
+            color: #64748b;
         }
 
+        /* ============================================================
+           STATUS DO ESP32
+           ============================================================ */
         .status-ip {
-            margin-top: 15px;
-            font-size: 0.8rem;
-            color: #6b4e3a;
-            background: rgba(255, 255, 255, 0.5);
-            padding: 8px 16px;
-            border-radius: 20px;
-            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #64748b;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(51, 65, 85, 0.2);
         }
 
         .status-ip .ip {
             font-weight: bold;
-            color: #3d2b1f;
+            color: #94a3b8;
         }
 
-        .conectado {
-            color: #22c55e;
+        .status-ip .conectado {
+            color: #4ade80;
         }
 
-        .desconectado {
-            color: #ef4444;
+        .status-ip .desconectado {
+            color: #f87171;
         }
 
-        @media (max-width: 480px) {
-            .cacto-img {
-                width: 200px;
-                height: 230px;
-            }
-            .info-cards {
-                grid-template-columns: repeat(3, 1fr);
-            }
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        .footer {
+            text-align: center;
+            color: #475569;
+            font-size: 0.65rem;
+            padding-top: 15px;
+            margin-top: 15px;
+            border-top: 1px solid rgba(51, 65, 85, 0.2);
+            letter-spacing: 0.3px;
+        }
+
+        /* ============================================================
+           RESPONSIVO
+           ============================================================ */
+        @media (max-width: 640px) {
+            .container { padding: 20px 16px; }
+            .header h1 { font-size: 1.6rem; }
+            .cacto-img { width: 200px; height: 240px; }
+            .info-cards { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+            .card .icon { font-size: 1.4rem; }
+            .card .value { font-size: 1.1rem; }
+        }
+
+        @media (max-width: 420px) {
+            .info-cards { grid-template-columns: repeat(2, 1fr); }
+            .cacto-img { width: 160px; height: 200px; }
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <header>
+        <!-- ===== HEADER ===== -->
+        <div class="header">
             <h1>🌵 Cacto Gaúcho</h1>
-            <p class="tagline">"O clima muda. Ele sente."</p>
-        </header>
-
-        <div class="cacto-area">
-            <img id="cacto-character" class="cacto-img" src="imagens/cacto-ensolarado.png" alt="Cacto Gaúcho">
+            <p class="tagline">"O <span>clima</span> muda. Ele <span>sente</span>."</p>
         </div>
 
+        <!-- ===== Cacto ===== -->
+        <div class="cacto-area">
+            <div class="cacto-wrapper">
+                <img id="cacto-character" class="cacto-img" src="imagens/cacto-ensolarado.png" alt="Cacto Gaúcho">
+            </div>
+        </div>
+
+        <!-- ===== Estado do Clima ===== -->
+        <div class="estado-clima">
+            <span class="badge" id="estadoBadge">☀️ Ensolarado</span>
+        </div>
+
+        <!-- ===== Frase do Dia ===== -->
+        <div class="frase-do-dia">
+            <p id="fraseDoDia">🌵 <span class="destaque">Cacto diz:</span> "Tudo tranquilo, meu chapa! Dia lindo!"</p>
+        </div>
+
+        <!-- ===== Cards ===== -->
         <div class="info-cards">
             <div class="card">
                 <span class="icon">🌡️</span>
                 <span class="label">Temperatura</span>
-                <span id="temp-value" class="value">--</span>
+                <span id="temp-value" class="value temperatura">--</span>
                 <span class="unit">°C</span>
             </div>
             <div class="card">
                 <span class="icon">💧</span>
                 <span class="label">Umidade</span>
-                <span id="umid-value" class="value">--</span>
+                <span id="umid-value" class="value umidade">--</span>
                 <span class="unit">%</span>
             </div>
             <div class="card">
                 <span class="icon">☀️</span>
                 <span class="label">UV</span>
-                <span id="uv-value" class="value">--</span>
+                <span id="uv-value" class="value uv">--</span>
                 <span class="unit">idx</span>
             </div>
             <div class="card">
                 <span class="icon">🌧️</span>
                 <span class="label">Chuva</span>
-                <span id="rain-value" class="value">--</span>
+                <span id="rain-value" class="value chuva">--</span>
                 <span class="unit">mm</span>
             </div>
             <div class="card">
                 <span class="icon">🔋</span>
                 <span class="label">Bateria</span>
-                <span id="battery-value" class="value">--</span>
+                <span id="battery-value" class="value bateria">--</span>
                 <span class="unit">%</span>
             </div>
         </div>
 
+        <!-- ===== Status ESP32 ===== -->
         <div class="status-ip">
             📡 Conectado ao ESP32: <span id="status-conexao" class="desconectado">⛔ Desconectado</span>
-            <br>
-            IP: <span class="ip" id="ip-esp">Nenhum</span>
+            &nbsp;•&nbsp; IP: <span class="ip" id="ip-esp">Nenhum</span>
+        </div>
+
+        <!-- ===== Footer ===== -->
+        <div class="footer">
+            🌵 Cacto Gaúcho • Feito com 🧉 e 🌵 • Dados em tempo real
         </div>
     </div>
 
     <script>
         // ============================================================
-        // ===== CONFIGURAÇÃO - MUDE O IP DO SEU ESP32 AQUI! =========
+        // ===== CONFIGURAÇÃO - IP DO ESP32 ===========================
         // ============================================================
-        var ipESP32 = '192.168.0.200'; // ← COLOQUE O IP DO SEU ESP32 AQUI
+        var ipESP32 = '192.168.0.200'; // ← COLOQUE O IP FIXO DO SEU ESP32
 
         // ============================================================
         // ===== MAPEAMENTO DAS IMAGENS ===============================
@@ -209,6 +379,42 @@
             ventoso: 'imagens/cacto-ventoso.png',
             frio: 'imagens/cacto-frio.png',
             quente: 'imagens/cacto-quente.png'
+        };
+
+        // ============================================================
+        // ===== FRASES DO CACTE ======================================
+        // ============================================================
+        var frases = {
+            ensolarado: [
+                '☀️ "Dia lindo! Perfeito pra esticar os espinhos."',
+                '🌵 "Solzão! Bora tomar um chimarrão na sombra."',
+                '😎 "Tô de óculos escuros, mas não sou de pagar!"'
+            ],
+            nublado: [
+                '☁️ "Fica pensativo, mas segue firme."',
+                '🌵 "Clima calmo, como eu gosto."',
+                '🤔 "Tá nublado... será que vai chover?"'
+            ],
+            chuvoso: [
+                '🌧️ "Peguei meu guarda-chuva! Não me molha, tchê!"',
+                '☂️ "Chuva boa pra dormir."',
+                '💧 "Não me molha, pelo amor!"'
+            ],
+            ventoso: [
+                '🌬️ "Segura o chapéu que o vento tá brabo!"',
+                '💨 "Tá voando tudo!"',
+                '🍃 "Ventania boa pros gaúchos!"'
+            ],
+            frio: [
+                '🥶 "Bora esquentar com um chimarrão!"',
+                '🧉 "Meu chimarrão tá mais quente que o clima!"',
+                '❄️ "Tá frio demais, vou botar meu casaquinho."'
+            ],
+            quente: [
+                '🥵 "Misericórdia, tô derretendo!"',
+                '💦 "Alguém me leva pra sombra!"',
+                '🔥 "Tá de rachar! Bora um tereré gelado!"'
+            ]
         };
 
         var estadoAtual = '';
@@ -256,7 +462,23 @@
                 }, 300);
                 estadoAtual = novoEstado;
                 console.log('🌵 Cacto mudou para: ' + novoEstado);
+
+                // Atualiza o badge do estado
+                var nomes = {
+                    ensolarado: '☀️ Ensolarado',
+                    nublado: '☁️ Nublado',
+                    chuvoso: '🌧️ Chuvoso',
+                    ventoso: '🌬️ Ventoso',
+                    frio: '🥶 Frio',
+                    quente: '🥵 Quente'
+                };
+                document.getElementById('estadoBadge').textContent = nomes[novoEstado] || '☀️ Ensolarado';
             }
+
+            // Atualiza frase do dia (pega uma aleatória do estado)
+            var listaFrases = frases[novoEstado] || frases.ensolarado;
+            var fraseEscolhida = listaFrases[Math.floor(Math.random() * listaFrases.length)];
+            document.getElementById('fraseDoDia').innerHTML = '🌵 <span class="destaque">Cacto diz:</span> "' + fraseEscolhida.replace('🌵 ', '').replace('"', '') + '"';
         }
 
         // ============================================================
@@ -284,14 +506,12 @@
                     console.error('Erro ao buscar dados:', erro);
                     tentativasFalhas++;
 
-                    // Mostra que está desconectado
                     document.getElementById('status-conexao').className = 'desconectado';
                     document.getElementById('status-conexao').textContent = '⛔ Desconectado';
 
-                    // Se falhou muitas vezes, mostra o IP em vermelho
                     if (tentativasFalhas > 3) {
                         document.getElementById('ip-esp').textContent = ipESP32 + ' (offline)';
-                        document.getElementById('ip-esp').style.color = '#ef4444';
+                        document.getElementById('ip-esp').style.color = '#f87171';
                     }
 
                     // Dados de fallback (simulação)
@@ -309,7 +529,7 @@
         // ============================================================
         // ===== INICIALIZA ===========================================
         // ============================================================
-        console.log('🌵 Cacto Gaúcho - Iniciando...');
+        console.log('🌵 Cacto Gaúcho V2 - Iniciando...');
         console.log('📡 IP do ESP32: ' + ipESP32);
 
         // Atualiza a cada 3 segundos
